@@ -90,7 +90,7 @@ int openFileAndLoadData() {
 	char tempTimeStr[30];
 
 	FILE *fpn = fopen(GPX_FILE_PATH, "r+"); /* open for reading */
-	if (fpn == NULL) { /* check does file exist etc */
+	if (fpn == NULL) { 						/* check does file exist etc */
 		printf("Cannot open %s for reading. \n", GPX_FILE_PATH);
 		printf("Set up GPX file at %s and restart. \n", GPX_FILE_PATH);
 		perror("Error opening GPX file. \n");
@@ -166,22 +166,22 @@ double calculate_tot_dist(struct node *lh)// ptr = ptr->elevation will cycle thr
 			lon1 = ptr->lon;
 			elev = ptr->elevation;
 
-			strcpy(currTime, ptr->timeString);							//  ^
-			timestring1 = *timeStrFromString(PreviousTime, &timestring1);//	|		This series of commands get's the time difference between..
-			timestring2 = *timeStrFromString(currTime, &timestring2);//	|		the current time read and the time from the previous linked list..
-			strcpy(PreviousTime, currTime);	//	|		this will therefore be the time interval taken between the distances.
-			timeValue += timeDiffV2(&timestring1, &timestring2);		//	^
+			strcpy(currTime, ptr->timeString);								//  ^
+			timestring1 = *timeStrFromString(PreviousTime, &timestring1);	//	|		This series of commands get's the time difference between..
+			timestring2 = *timeStrFromString(currTime, &timestring2);		//	|		the current time read and the time from the previous linked list..
+			strcpy(PreviousTime, currTime);									//	|		this will therefore be the time interval taken between the distances.
+			timeValue += timeDiffV2(&timestring1, &timestring2);			//	^
 
-			//THis does the same as above, gets the difference in elevation between two consecutive linked lists
+			//This does the same as above, gets the difference in elevation between two consecutive linked lists
 			//This is for the final elevation, above is for the function PrintSplits
 			finalElevBeforeSplit = ptr->elevation;
 
-			if (pathLen >= 1000 || ptr->next == NULL) {//if distance exceeds 1000 or there isn't another linked list left, i.e. the last list has been used
+			if (pathLen >= 1000 || ptr->next == NULL) {						//if distance exceeds 1000 or there isn't another linked list left, i.e. the last list has been used
 				elevPass = finalElevBeforeSplit - tempElev;
 				PrintSplits(pathLen, elevPass, timeValue, splitNum);
 				tempElev = finalElevBeforeSplit;
 				splitNum++;
-				timeValue = 0;			//reset the parameters for next split
+				timeValue = 0;												//reset the parameters for next split
 				elevPass = 0;
 				pathLen = 0;
 			}
@@ -195,7 +195,7 @@ double calculate_tot_dist(struct node *lh)// ptr = ptr->elevation will cycle thr
 			ptr = ptr->next;
 		}
 	}
-	printf("\t\t----------------------------------------------------\n\n\n");//From here on prints the overall stats
+	printf("\t\t----------------------------------------------------\n\n\n");		//From here on prints the overall stats
 	printf("\t\t\t   ----------End Of Splits----------\n\n");
 
 	printf("\t\t\t   ---------------------------------\n");
@@ -203,14 +203,14 @@ double calculate_tot_dist(struct node *lh)// ptr = ptr->elevation will cycle thr
 	printf("\t\t\t   ---------------------------------\n");
 	strcpy(finishTimeStr, curr->timeString);
 
-	tm1 = *timeStrFromString(startTimeStr, &tm1);			//Overall time taken
+	tm1 = *timeStrFromString(startTimeStr, &tm1);									//Overall time taken
 	tm2 = *timeStrFromString(finishTimeStr, &tm2);
 	finalTime = timeDiffV2(&tm1, &tm2);
 
 	printf("\t\t\t   | Elapsed Time:    %d sec\t   |\n", finalTime);
 	printf("\t\t\t   | Path Length:    %5.0f m\t   |\n", finalPathLen);
 
-	averagePace = timeDiffV2(&tm1, &tm2) / finalPathLen * 1000.0 / 60.0;//Get average pace
+	averagePace = timeDiffV2(&tm1, &tm2) / finalPathLen * 1000.0 / 60.0;
 	if (finalPathLen >= 1) {
 		printf("\t\t\t   | Average Pace:    %4.2lf m/km    |\n", averagePace);
 		printf("\t\t\t   | Overall Elevation: %4d m     |\n", (int) finalElevation);
@@ -237,10 +237,10 @@ char *readStringAfterToken(char *txtstr, char *tkn, char *res, int len, int step
 	char *tmpstr;
 	char *ret = NULL;
 
-	tmpstr = strstr(txtstr, tkn);		//Search read in line for <time>
+	tmpstr = strstr(txtstr, tkn);					//Search read in line for <time>
 
-	if (tmpstr) // Checking to make sure the pointer is not NULL, i.e. strstr returned something.
-		ret = strncpy(res, (tmpstr + steps), len);//if it finds <time> it copys all the data after the header into the variable ret and returns it
+	if (tmpstr)										// Checking to make sure the pointer is not NULL, i.e. strstr returned something.
+		ret = strncpy(res, (tmpstr + steps), len);	//if it finds <time> it copys all the data after the header into the variable ret and returns it
 
 	return ret;
 }
@@ -256,9 +256,9 @@ double readDoubleAfterToken(char *txtstr, char *tkn, int steps) { //target strin
 	char *rem;
 	double res = -1;
 
-	tmpstr = strstr(txtstr, tkn);//Searches line of file for occurance of tkn... lat=" "...
+	tmpstr = strstr(txtstr, tkn);						//Searches line of file for occurrence of tkn... lat=" "...
 
-	if (tmpstr) // Checking to make sure the pointer is not NULL, i.e. strstr returned something.
+	if (tmpstr) 										// Checking to make sure the pointer is not NULL, i.e. strstr returned something.
 		res = strtod((tmpstr + steps), &rem);
 
 	return res;
@@ -340,19 +340,19 @@ struct node* PrintSplits(double distance, double elevation, double timeValue,
 
 	static int splitHeader = 0;
 	double PaceInDecimal = ((timeValue / distance) * 1000.0) / 60.0;//Puts pace in decimal form
-	double tempPace2 = floor(PaceInDecimal);//rounds it down to nearest number
+	double tempPace2 = floor(PaceInDecimal);						//rounds it down to nearest number
 	double PaceInTimeInterval = ((PaceInDecimal - tempPace2) * 60);	//Changes the decimal point to ratio between 1 - 60
 	double speed = (distance / timeValue) * 60 * 60 / 1000;
 
-	if (PaceInDecimal < fastestPace) { //GLOBAL VARIABLE: Gets users fastest pace
+	if (PaceInDecimal < fastestPace) {					 //GLOBAL VARIABLE: Gets users fastest pace
 		fastestPace = PaceInDecimal;
 	}
 
-	if (PaceInDecimal > slowestPace) {//GLOBAL VARIABLE: Gets users slowest pace
+	if (PaceInDecimal > slowestPace) {					//GLOBAL VARIABLE: Gets users slowest pace
 		slowestPace = PaceInDecimal;
 	}
 
-	if (splitHeader == 0) {//As a result of this being a static int, this will only print once
+	if (splitHeader == 0) {								//As a result of this being a static int, this will only print once
 		firstElevation = elevation;
 
 		printf("\n\n\t\t          ----------Time Splits----------\n\n");
@@ -361,7 +361,7 @@ struct node* PrintSplits(double distance, double elevation, double timeValue,
 		printf("\t\t----------------------------------------------------\n");
 	}
 
-	if (elevation - floor(elevation) > 0.5)	 {//This will round the elevation up or down depending on it's decimal being greater than or less than 0.5
+	if (elevation - floor(elevation) > 0.5)	 {			//This will round the elevation up or down depending on it's decimal being greater than or less than 0.5
 		elevation = ceil(elevation);
 	}
 
@@ -370,7 +370,7 @@ struct node* PrintSplits(double distance, double elevation, double timeValue,
 	}
 
 	printf("\t\t|\t  %2.d|\t  %3d:%02d|       %5.2lf|\t    %7d|\n", splitNum, (int) tempPace2, (int) PaceInTimeInterval, speed, (int) elevation);
-	splitHeader = 1;//This stops the header from being printed each time, as it's static
+	splitHeader = 1;									//This stops the header from being printed each time, as it's static
 	return ptr;
 }
 
